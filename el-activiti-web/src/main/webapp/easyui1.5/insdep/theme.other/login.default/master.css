@@ -1,0 +1,56 @@
+html,body{color:#282828;background:#f5f5f5;display:inline;}
+.hide{ display:none; }
+#browser_prompt{ margin: 10px 0; display: none; }
+
+/*整体布局大小*/
+.theme-layout{ width:800px;height:auto;margin:100px auto 0 auto;}
+
+/*底部版权部分样式*/
+.theme-footer-layout{ font-family:Arial; color:#9d9d9d; margin:20px 0;text-align:center;overflow:auto;}
+.theme-account-layout,.theme-code-layout{background:#fff;overflow:auto; padding:50px 0 100px; position:relative;}
+
+.theme-logo{ width:128px; height:128px; background:url("images/examples_logo.png"); margin:0 auto 30px;}
+
+/*Form布局大小*/
+.theme-form{ margin:0 30%;}
+.theme-form dl dd{ margin-bottom:5px; }
+.theme-form dl dd,.theme-form dl dt{ clear:both; height: auto; overflow:auto; line-height: 32px;}
+/*右上角标样式*/
+.theme-corner-QRcode,.theme-corner-close{ position:absolute; top:0; right:0; cursor: pointer;}
+.theme-corner-QRcode{ width:93px; height:93px;  background:url("images/QRcode.png");}
+.theme-corner-close{ width:30px; height:30px; margin:10px;  border-radius: 20px;  background:#e5e5e5 url("images/QRcode-close.png") center center no-repeat;}
+
+/*扫码登录布局*/
+.theme-code-layout .theme-caption,.theme-code-layout .theme-describe,.theme-code-layout .theme-QRcode{ text-align:center; }
+.theme-code-layout .theme-caption{ font-weight: bold; font-size: 16px; margin:50px 0 10px; color: #0d5cbe; }
+.theme-code-layout .theme-describe{ margin-bottom: 20px; color: #606060; }
+.theme-code-layout .theme-QRcode{margin-bottom: 50px;}
+
+
+/*重置登录Form布局内的EasyUI控件样式*/
+.theme-form dl dd .textbox{ border-radius:3px; border: 1px solid #cccccc;}
+.theme-form dl dd .textbox,.theme-form dl dd .textbox-invalid{box-shadow: 0px 1px 5px rgba(0,0,0,.05) inset; }
+
+.theme-form dl dt .l-btn.submit{border: 1px solid transparent; background:#009ce4; color: #fff;}
+.theme-form dl dt .l-btn.submit:hover{ background: #0093d7; }
+.theme-form dl dt .l-btn.submit:active{ background: #0083c0; }
+
+/*用户类型Combo表单样式*/
+.combobox-blue+.combo{background:#1e7bee;border:1px solid transparent !important;box-shadow:none !important;}
+.combobox-blue+.combo .textbox-addon .combo-arrow {background: url(images/combo_arrow_white.png) no-repeat center center;}
+.combobox-blue+.combo .textbox-text,.combobox-blue-panel .panel-body .combobox-item{color:#fff;}
+.combobox-blue-panel{box-shadow:none;}
+.combobox-blue-panel .panel-body{border:none;background:#1e7bee;}
+.combobox-blue-panel .panel-body .combobox-item-hover,.combobox-blue-panel .panel-body .combobox-item-selected.combobox-item-hover{background:#fff;color:#0669e2;}
+.combobox-blue-panel .panel-body .combobox-item-selected{background:#1e7bee;}
+
+/*Mail组合表单样式*/
+.group-mail{overflow:auto;}
+.group-mail label,.group-mail .textbox,.group-mail .combo{float:left;}
+.group-mail label{ display: block; height: 36px; line-height: 36px; width: 20px; text-align: center; border-top: 1px solid #cccccc; border-bottom: 1px solid #cccccc;background: #eeeeee; }
+.group-mail .textbox{border-radius: 3px 0 0 3px !important;}
+.group-mail .combo{border-radius: 0 3px 3px 0 !important;border-left-width:0!important; box-shadow:none !important; background:#eeeeee;}
+.combobox-group-mail-panel{box-shadow:none;width:140px !important; margin-left: -21px;}
+.combobox-group-mail-panel .panel-body{background:#eeeeee; border-top: none;}
+.combobox-group-mail-panel .panel-body .combobox-item{padding: 5px 10px 5px 30px;}
+

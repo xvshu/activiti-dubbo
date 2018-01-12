@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd" default-lazy-init="true">
+
+    <dubbo:application name="el-activiti-soa-provider" owner="el-activiti-soa" organization="dubbox"/>
+    <dubbo:registry protocol="zookeeper" address="${zk-address}" id="elZookeeper" timeout="15000"/>
+    <dubbo:protocol name="dubbo" port="-1"  />
+    <dubbo:monitor protocol="registry"  />
+
+    <dubbo:service interface="com.eloancn.framework.activiti.service.ElActivitiService" ref="elActivitiService" group="el-activiti-soa" version="1.1.0"
+                   timeout="60000" protocol="dubbo" registry="elZookeeper" />
+
+</beans>

@@ -1,0 +1,18 @@
+
+.icon_lists li{
+  float:left;
+  width: 100px;
+  height:180px;
+  text-align: center;
+}
+.icon_lists .icon{
+  font-size: 30px;
+  margin: 10px 0;
+  color:#333;
+  -webkit-transition: font-size 0.25s ease-out 0s;
+  -moz-transition: font-size 0.25s ease-out 0s;
+  transition: font-size 0.25s ease-out 0s;
+  vertical-align: -webkit-baseline-middle;
+
+}
+

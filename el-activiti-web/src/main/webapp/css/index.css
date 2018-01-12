@@ -1,0 +1,20 @@
+.index-nav-item {
+	text-align: left;
+	background: #fff;
+	height: 40px;
+}
+
+
+.index-nav-item:hover {
+	text-align: left;
+	background: #e6e6e6;
+	height: 40px;
+}
+
+
+.index-nav-item img {
+	border: 0;
+}
+.index--navi-tab {
+	padding: 5px;
+}

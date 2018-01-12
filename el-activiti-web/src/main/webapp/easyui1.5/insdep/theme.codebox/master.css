@@ -1,0 +1,33 @@
+html,body{color:#282828;}
+.hide{ display:none; }
+
+.theme-left-layout,.theme-right-layout{border:none;}
+.theme-left-layout{ background:#1c2b36; color:#7ba0bb; width: 200px;}
+.theme-left-layout .panel-body{ background:transparent;border:none;}
+
+/*主题LOGO布局,根据需求自行调整*/
+.theme-left-layout .theme-logo{ font-weight:bold;font-size:14px;text-align:center; color: #c1cfe0; background:#1c2b36; box-shadow:0 0 5px #101c24;}
+
+.theme-left-layout .theme-logo,.theme-right-layout .theme-navigation{ height:40px; line-height:40px; }
+
+.theme-left-layout .theme-user-info{ text-align: center; margin:10px 0 0 0; }
+.theme-left-layout .theme-user-info .theme-user-portrait img{ border-radius:100px; }
+.theme-left-layout .theme-user-info dl dd{ color: #44657b; }
+.theme-left-layout .theme-user-info dl dt .l-btn{ margin-right:-14px;  }
+.theme-left-layout .theme-user-info dl dt .l-btn,
+.theme-left-layout .theme-user-info dl dt .l-btn:hover,
+.theme-left-layout .theme-user-info dl dt .l-btn:active
+{ border:1px solid transparent; background: transparent;}
+.theme-left-layout .theme-user-info dl dt .m-btn-downarrow{ background: url(images/menu_arrows_white.png) no-repeat 0 center;}
+.theme-left-layout .theme-user-info dl dt .l-btn-text{ color:#c1cfe0; font-size: 14px; font-weight: bold;}
+
+
+.theme-left-menu-layout dl{ color: #46687f; border-top: 2px solid #161e25; padding: 10px 25px; }
+.theme-left-menu-layout dl dt{ margin:8px 0; }
+.theme-left-menu-layout dl dd{ color:#7ba0bb; margin:5px 0;}
+.theme-left-menu-layout dl dd span{ float:right; line-height:100%;}
+
+
+.theme-right-layout .layout-panel-north .panel-body,.theme-right-layout .layout-panel-center .panel-body{border:none;}
+.theme-right-layout .layout-panel-north .panel-body{ border-bottom: 1px solid #e0e4e4;}
+.theme-right-layout .layout-panel-north{  box-shadow:0 0 5px #e3e3e3;}

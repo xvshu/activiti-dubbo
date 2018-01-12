@@ -1,0 +1,10 @@
+.tree-node{height:26px;}
+.tree-file {background-position:-240px 5px;height:26px;}
+.tree-folder {background-position:-208px 5px;height:26px;}
+.tree-lines .tree-expanded, .tree-lines .tree-root-first .tree-expanded{background-position:-144px 2px;height:26px;}
+.tree-lines .tree-collapsed, .tree-lines .tree-root-first .tree-collapsed{background-position:-128px 2px;height:26px;}
+.tree-lines .tree-node-last .tree-expanded, .tree-lines .tree-root-one .tree-expanded{background-position:-80px 2px;height:26px;}
+.tree-lines .tree-node-last .tree-collapsed, .tree-lines .tree-root-one .tree-collapsed{background-position:-64px 2px;height:26px;}
+.tree-folder-open{background-position:-224px 5px;}
+.tree-title{height:26px;line-height:26px;padding-left:2px;}
+.tree-join,.tree-line{height:26px;}
