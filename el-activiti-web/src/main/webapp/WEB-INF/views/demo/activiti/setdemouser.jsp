@@ -56,15 +56,6 @@
 						<input type="text" name="userId" id="userId">
 					</td>
 					<td>
-						<button type="button" onclick="setdemouser();">设置为demo-user</button>
-					</td>
-					<td>
-						<button type="button" onclick="setdemojingli();">设置为demo-jingli</button>
-					</td>
-					<td>
-						<button type="button" onclick="setdemozongjian();">设置为demo-zongjian</button>
-					</td>
-					<td>
 						<button type="submmit">提交</button>
 					</td>
 				</tr>

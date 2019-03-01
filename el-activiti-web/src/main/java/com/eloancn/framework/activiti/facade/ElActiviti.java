@@ -1,32 +1,39 @@
 package com.eloancn.framework.activiti.facade;
 
 import com.alibaba.fastjson.JSON;
-import com.eloancn.framework.activiti.service.user.UserChangeService;
+import com.eloancn.framework.activiti.dto.WorkFlowDto;
+import com.eloancn.framework.activiti.redis.task.ActivitiTaskCache;
 import com.eloancn.framework.activiti.util.Page;
 import com.eloancn.framework.activiti.TaskResult;
 import com.eloancn.framework.activiti.redis.client.ActivitiEventProducer;
 import com.eloancn.framework.activiti.redis.model.ActivitiEventModel;
 import com.eloancn.framework.activiti.redis.utils.EventType;
 import com.eloancn.framework.activiti.service.ElActivitiService;
+import com.eloancn.framework.activiti.util.PageUtil;
+import com.eloancn.framework.activiti.util.TaskType;
+import com.eloancn.framework.activiti.util.activiti.TaskComparator;
 import com.eloancn.framework.activiti.util.error.Preconditions;
 import com.eloancn.organ.common.BusCodeEnum;
+import com.eloancn.organ.dto.UserDto;
 import org.activiti.engine.*;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricProcessInstanceQuery;
 import org.activiti.engine.history.HistoricTaskInstance;
+import org.activiti.engine.impl.persistence.entity.VariableInstance;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.runtime.ProcessInstanceQuery;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
+import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 /**
  * Created by xvshu on 2017/10/30.
@@ -56,9 +63,20 @@ public class ElActiviti implements ElActivitiService {
     private ActivitiEventProducer activitiEventProducer;
 
     @Autowired
-    private UserChangeService userChangeService;
+    private ActivitiTaskCache activitiTaskCache;
+
+
 
     ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+
+    /**
+     * 启动流程
+     *
+     */
+    @Override
+    public void startWorkflow(WorkFlowDto workFlowDto) {
+        startWorkflow(workFlowDto.getProcessDefinitionKey(),workFlowDto.getUserId(),workFlowDto.getBusinessKey(), workFlowDto.getNextUserIds(),workFlowDto.getVariables(),workFlowDto.getBusCodeEnum());
+    }
 
 
     /**
@@ -72,19 +90,14 @@ public class ElActiviti implements ElActivitiService {
         logger.info("=startWorkflow=>processDefinitionKey:{} userId:{} businessKey:{} variables:{} nextUserIds:{}",processDefinitionKey,userId,businessKey,variables, JSON.toJSONString(nextUserIds));
         //校验参数
         Preconditions.checkNotNull(processDefinitionKey,"processDefinitionKey is null");
-        Preconditions.checkNotNull(businessKey,"businessKey is null");
         Preconditions.checkNotNull(userId,"userId is null");
         //转换新旧用户id
-        userId = userChangeService.changeUserID(userId,busCodeEnum);
 
 
-        if(nextUserIds==null || nextUserIds.size()<1){
-            //TODO获取上级id
-            nextUserIds = userChangeService.getParentUserID(userId);
-        }else{
-            nextUserIds = userChangeService.changeUserIDBatch(nextUserIds,busCodeEnum);
+
+        if(nextUserIds!=null){
+            nextUserIds = new ArrayList<>();
         }
-        Preconditions.checkNotNullOrEmpty(nextUserIds,"busCodeEnum is null");
 
         ActivitiEventModel activitiEventModel = new ActivitiEventModel();
         activitiEventModel.setEventType(EventType.STARTWORKFLOW);
@@ -94,6 +107,7 @@ public class ElActiviti implements ElActivitiService {
         activitiEventModel.setNextUserIds(nextUserIds);
         activitiEventModel.setVariables(variables);
         activitiEventModel.setBusCodeEnum(busCodeEnum);
+
 
         try {
             activitiEventProducer.fireEvent(activitiEventModel);
@@ -118,18 +132,60 @@ public class ElActiviti implements ElActivitiService {
         Preconditions.checkNotNull(page,"page is null");
         Preconditions.checkNotNull(page.getPageSize(),"page.size is null");
         Preconditions.checkNotNull(page.getPageNo(),"page.no is null");
-        Preconditions.checkNotNull(busCodeEnum,"busCodeEnum is null");
 
-        //转换新旧用户id
-        userId = userChangeService.changeUserID(userId,busCodeEnum);
-
-        int[] pageParams = initPageParm(page);
         Page<TaskResult> resultPage = page;
-        long timeBegin= System.currentTimeMillis();
+        resultPage = getTasks(userId,page);
+        logger.info("=findTodoTasks=> end time:{};", new Date());
+        return resultPage;
+    }
+
+    //组合所有的activiti与报警待办-无流程key限制
+    private Page<TaskResult> getTasks(String userId,Page page){
+        page = getTaskFromDb(null,userId,page);
+        return page ;
+    }
+    //组合所有的activiti与报警待办-有流程key限制
+    private Page<TaskResult> getTasks(List<String> processDefinitionKeys,String userId,Page page){
+        page= getTaskFromDb(processDefinitionKeys,userId,page);
+        return page ;
+    }
+
+    //从db层面获取任务
+    private Page<TaskResult> getTaskFromDb(List<String> processDefinitionKeys,String userId,Page page){
+        //获取activiti任务
+        List<TaskResult> results = getTaskFromActiviti( processDefinitionKeys,userId);
+
+        //安创建时间排序
+        Collections.sort(results,new TaskComparator());
+        int count = results.size();
+        //人工分页
+        results= PageUtil.page(results,page.getPageNo(),page.getPageSize());
+        page.setResult(results);
+        page.setTotalCount(count);
+        return page;
+    }
+
+    private List<TaskResult> getTaskFromActiviti(List<String> processDefinitionKeys,String userId){
+
+        String key="";
+        if(processDefinitionKeys!=null){
+            key = JSON.toJSONString(processDefinitionKeys)+userId;
+        }else{
+            key = userId;
+        }
+
+        if(activitiTaskCache.containKey(key)){
+            return (List<TaskResult>)activitiTaskCache.getTaskPage(key);
+        }
+
 
         // 根据当前人的ID查询
         TaskQuery taskQuery = taskService.createTaskQuery().taskCandidateOrAssigned(userId);
-        List<Task> tasks = taskQuery.listPage(pageParams[0], pageParams[1]);
+        if(processDefinitionKeys!=null){
+            taskQuery = taskQuery.processDefinitionKeyIn(processDefinitionKeys);
+        }
+
+        List<Task> tasks = taskQuery.list();
 
         List<TaskResult> results = new ArrayList<>();
 
@@ -149,16 +205,19 @@ public class ElActiviti implements ElActivitiService {
             result.setTask(task);
             result.setProcessInstance(processInstance);
             result.setProcessDefinition(getProcessDefinition(processInstance.getProcessDefinitionId()));
+            result.setTaskType(TaskType.ActivitiTask);
             results.add(result);
         }
-        resultPage.setResult(results);
-        resultPage.setTotalCount(taskQuery.count());
 
 
 
-        logger.info("=findTodoTasks=> spen[{}]ms;",System.currentTimeMillis()-timeBegin);
 
-        return resultPage;
+        //结果放入缓存
+        if(results!=null){
+            activitiTaskCache.deleteTask(key);
+            activitiTaskCache.initTaskPage(key,results);
+        }
+        return results;
     }
 
     /**
@@ -176,43 +235,10 @@ public class ElActiviti implements ElActivitiService {
         Preconditions.checkNotNull(page,"page is null");
         Preconditions.checkNotNull(page.getPageSize(),"page.size is null");
         Preconditions.checkNotNull(page.getPageNo(),"page.no is null");
-        Preconditions.checkNotNull(busCodeEnum,"busCodeEnum is null");
 
-        //转换新旧用户id
-        userId = userChangeService.changeUserID(userId,busCodeEnum);
-
-        int[] pageParams = initPageParm(page);
         Page<TaskResult> resultPage = page;
-
-        long timeBegin= System.currentTimeMillis();
-
-        // 根据当前人的ID查询
-        TaskQuery taskQuery = taskService.createTaskQuery().processDefinitionKeyIn(processDefinitionKeys).taskCandidateOrAssigned(userId);
-        List<Task> tasks = taskQuery.listPage(pageParams[0], pageParams[1]);
-
-        List<TaskResult> results = new ArrayList<>();
-
-        // 根据流程的业务ID查询实体并关联
-        for (Task task : tasks) {
-            String processInstanceId = task.getProcessInstanceId();
-            ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).active().singleResult();
-            if (processInstance == null) {
-                continue;
-            }
-            String businessKey = processInstance.getBusinessKey();
-            if (businessKey == null) {
-                continue;
-            }
-            TaskResult result = new TaskResult();
-            result.setTask(task);
-            result.setProcessInstance(processInstance);
-            result.setProcessDefinition(getProcessDefinition(processInstance.getProcessDefinitionId()));
-            results.add(result);
-        }
-        resultPage.setResult(results);
-        resultPage.setTotalCount(taskQuery.count());
-
-        logger.info("=findTodoTasks=> spen[{}]ms;",System.currentTimeMillis()-timeBegin);
+        resultPage = getTasks(processDefinitionKeys,userId,page);
+        logger.info("=findTodoTasks=> end time:{};", new Date());
 
         return resultPage;
     }
@@ -252,10 +278,7 @@ public class ElActiviti implements ElActivitiService {
         Preconditions.checkNotNull(page,"page is null");
         Preconditions.checkNotNull(page.getPageSize(),"page.size is null");
         Preconditions.checkNotNull(page.getPageNo(),"page.no is null");
-        Preconditions.checkNotNull(busCodeEnum,"busCodeEnum is null");
 
-        //转换新旧用户id
-        userID = userChangeService.changeUserID(userID,busCodeEnum);
 
         int[] pageParams = initPageParm(page);
 
@@ -304,10 +327,7 @@ public class ElActiviti implements ElActivitiService {
         Preconditions.checkNotNull(page,"page is null");
         Preconditions.checkNotNull(page.getPageSize(),"page.size is null");
         Preconditions.checkNotNull(page.getPageNo(),"page.no is null");
-        Preconditions.checkNotNull(busCodeEnum,"busCodeEnum is null");
 
-        //转换新旧用户id
-        userID = userChangeService.changeUserID(userID,busCodeEnum);
 
         int[] pageParams = initPageParm(page);
         Page<TaskResult> resultPage = page;
@@ -341,14 +361,13 @@ public class ElActiviti implements ElActivitiService {
         //校验参数
         Preconditions.checkNotNull(taskId,"taskId is null");
         Preconditions.checkNotNull(userId,"userId is null");
-        Preconditions.checkNotNull(busCodeEnum,"busCodeEnum is null");
 
-        //转换新旧用户id
-        userId = userChangeService.changeUserID(userId,busCodeEnum);
+
 
         long timeBegin= System.currentTimeMillis();
 
         taskService.claim(taskId, userId);
+        activitiTaskCache.deleteAllTask();
 
         logger.info("=claim=> spen[{}]ms;",System.currentTimeMillis()-timeBegin);
 
@@ -360,24 +379,25 @@ public class ElActiviti implements ElActivitiService {
      * @return
      */
     @Override
+    public void nodeComplete(WorkFlowDto workFlowDto) {
+        nodeComplete(workFlowDto.getUserId(),workFlowDto.getTaskId(),workFlowDto.getVariables(),workFlowDto.getNextUserIds(),workFlowDto.getBusCodeEnum());
+    }
+
+    /**
+     * 完成单个节点任务
+     * @return
+     */
+    @Override
     public void nodeComplete(String userID,String taskId, Map<String, Object> variables,List<String> nextUserIds,BusCodeEnum busCodeEnum) {
 
         //校验参数
         Preconditions.checkNotNull(taskId,"taskID is null");
-        Preconditions.checkNotNull(busCodeEnum,"busCodeEnum is empty");
         Preconditions.checkNotNull(userID,"userId is null");
 
-        //转换新旧用户id
-        userID = userChangeService.changeUserID(userID,busCodeEnum);
-        if(nextUserIds==null || nextUserIds.size()<1){
-            //TODO获取上级id
-            nextUserIds = userChangeService.getParentUserID(userID);
-        }else{
-            //转换新旧用户id
-            nextUserIds = userChangeService.changeUserIDBatch(nextUserIds,busCodeEnum);
-        }
-        Preconditions.checkNotNullOrEmpty(nextUserIds,"nextUserIds is null");
 
+        if(nextUserIds!=null){
+            nextUserIds = new ArrayList<>();
+        }
 
         ActivitiEventModel activitiEventModel = new ActivitiEventModel();
         activitiEventModel.setEventType(EventType.NODECOMPLETE);
@@ -388,10 +408,22 @@ public class ElActiviti implements ElActivitiService {
 
         try {
             activitiEventProducer.fireEvent(activitiEventModel);
+            activitiTaskCache.deleteAllTask();
         } catch (Exception e) {
             logger.error("error on complete task {}, variables={}", new Object[]{taskId, variables, e});
             throw e;
         }
+    }
+
+    @Override
+    public void msgComplete(String userID, String msgId, BusCodeEnum busCodeEnum) {
+        logger.info("=msgComplete=>userID:{},msgId:{}",userID,msgId);
+
+    }
+
+    @Override
+    public void msgComplete(WorkFlowDto workFlowDto) {
+        msgComplete(workFlowDto.getUserId(),workFlowDto.getTaskId(),workFlowDto.getBusCodeEnum());
     }
 
     /**
@@ -419,6 +451,17 @@ public class ElActiviti implements ElActivitiService {
 
 
         return list;
+    }
+
+    @Override
+    public Map<String, Object> getVariables(String processInstanceId) {
+        Map<String, Object> result = new HashedMap();
+        try{
+            result = runtimeService.getVariables(processInstanceId);
+        }catch (Exception ex){
+            result = new HashedMap();
+        }
+        return result;
     }
 
     private int[]  initPageParm(Page page){

@@ -3,6 +3,7 @@ package com.eloancn.framework.activiti.web.form.formkey;
 import com.eloancn.framework.activiti.util.Page;
 import com.eloancn.framework.activiti.util.PageUtil;
 import com.eloancn.framework.activiti.util.UserUtil;
+import com.eloancn.organ.dto.UserDto;
 import org.activiti.engine.*;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricProcessInstanceQuery;
@@ -139,14 +140,14 @@ public class FormKeyController {
 
         logger.debug("start form parameters: {}", formProperties);
 
-        User user = UserUtil.getUserFromSession(request.getSession());
+        UserDto user = UserUtil.getUserFromSession(request.getSession());
 
         // 用户未登录不能操作，实际应用使用权限框架实现，例如Spring Security、Shiro等
-        if (user == null || StringUtils.isBlank(user.getId())) {
-            return "redirect:/login?timeout=true";
+        if (user == null ) {
+            return "redirect:/login";
         }
         try {
-            identityService.setAuthenticatedUserId(user.getId());
+            identityService.setAuthenticatedUserId(String.valueOf(user.getId()));
 
             formService.submitTaskFormData(taskId, formProperties);
         } finally {
@@ -180,13 +181,13 @@ public class FormKeyController {
 
         logger.debug("start form parameters: {}", formProperties);
 
-        User user = UserUtil.getUserFromSession(request.getSession());
+        UserDto user = UserUtil.getUserFromSession(request.getSession());
         // 用户未登录不能操作，实际应用使用权限框架实现，例如Spring Security、Shiro等
-        if (user == null || StringUtils.isBlank(user.getId())) {
-            return "redirect:/login?timeout=true";
+        if (user == null ) {
+            return "redirect:/login";
         }
         try {
-            identityService.setAuthenticatedUserId(user.getId());
+            identityService.setAuthenticatedUserId(String.valueOf(user.getId()));
 
             ProcessInstance processInstance = formService.submitStartFormData(processDefinitionId, formProperties);
             logger.debug("start a processinstance: {}", processInstance);
@@ -208,7 +209,7 @@ public class FormKeyController {
     @RequestMapping(value = "task/list")
     public ModelAndView taskList(Model model, HttpServletRequest request) {
         ModelAndView mav = new ModelAndView("/form/formkey/formkey-task-list");
-        User user = UserUtil.getUserFromSession(request.getSession());
+        UserDto user = UserUtil.getUserFromSession(request.getSession());
         Page<Task> page = new Page<Task>(PageUtil.PAGE_SIZE);
         int[] pageParams = PageUtil.init(page, request);
 
@@ -242,7 +243,7 @@ public class FormKeyController {
      */
     @RequestMapping(value = "task/claim/{id}")
     public String claim(@PathVariable("id") String taskId, HttpSession session, RedirectAttributes redirectAttributes) {
-        String userId = UserUtil.getUserFromSession(session).getId();
+        String userId = UserUtil.getUserFromSession(session).getId().toString();
         taskService.claim(taskId, userId);
         redirectAttributes.addFlashAttribute("message", "任务已签收");
         return "redirect:/form/formkey/task/list";

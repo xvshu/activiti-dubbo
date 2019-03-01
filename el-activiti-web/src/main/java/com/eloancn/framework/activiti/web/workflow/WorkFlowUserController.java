@@ -74,11 +74,7 @@ public class WorkFlowUserController {
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    private DepartmentService departmentOrganService;
 
-    @Autowired
-    private UserService userOrganService;
 
     @RequestMapping(value = "/department/loadAll")
     @ResponseBody
@@ -87,7 +83,7 @@ public class WorkFlowUserController {
 
         Map<String,Object> paramMap = new HashMap<>();
         paramMap.put("status",1);
-        ResultDTO<List<TreeNodeDto>> resultDTO  = departmentOrganService.getAllDepartment(paramMap);
+        ResultDTO<List<TreeNodeDto>> resultDTO  =null ;
         logger.info("=WorkFlowUserController=> Result:{}",JSON.toJSONString(resultDTO));
         return resultDTO;
     }
@@ -109,7 +105,7 @@ public class WorkFlowUserController {
         //TODO:根据部门id获取用户
         UserDto searchDto = new UserDto();
         searchDto.setDepCode(depId);
-        ResultDTO<List<UserDto>> resultDTO  = userOrganService.searchUser(searchDto);
+        ResultDTO<List<UserDto>> resultDTO  = null;
         logger.info("=WorkFlowUserController=>loadAllUser depId:{} Result:{}",depId,JSON.toJSONString(resultDTO));
         return resultDTO;
     }

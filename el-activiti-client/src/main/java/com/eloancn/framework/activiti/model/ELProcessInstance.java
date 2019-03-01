@@ -5,6 +5,7 @@ import org.activiti.engine.impl.persistence.entity.SuspensionState;
 import org.activiti.engine.runtime.ProcessInstance;
 
 import java.util.Date;
+import java.util.Map;
 
 
 /**
@@ -31,6 +32,9 @@ public class ELProcessInstance {
     protected Integer processDefinitionVersion;
     protected String businessKey;
     protected String parentId;
+
+    protected Map variables;
+
     protected int suspensionState = SuspensionState.ACTIVE.getStateCode();
     public void setSuspensionState(boolean suspensionState) {
         if(suspensionState){
@@ -224,5 +228,13 @@ public class ELProcessInstance {
 
     public void setStartUserId(String startUserId) {
         this.startUserId = startUserId;
+    }
+
+    public Map getVariables() {
+        return variables;
+    }
+
+    public void setVariables(Map variables) {
+        this.variables = variables;
     }
 }

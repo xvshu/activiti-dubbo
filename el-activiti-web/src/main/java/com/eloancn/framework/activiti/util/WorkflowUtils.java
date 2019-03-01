@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -83,4 +84,14 @@ public class WorkflowUtils {
         return diagramPath;
     }
 
+
+    public static String ListCovertString(List<String> source){
+        StringBuffer SB =new StringBuffer();
+        for(String one : source){
+            SB.append(one);
+            SB.append(",");
+        }
+        SB.deleteCharAt(SB.length()-1);
+        return SB.toString();
+    }
 }

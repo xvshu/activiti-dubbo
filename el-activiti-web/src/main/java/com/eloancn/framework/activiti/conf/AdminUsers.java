@@ -1,5 +1,7 @@
 package com.eloancn.framework.activiti.conf;
 
+import org.springframework.stereotype.Service;
+
 /**
  * Created by xvshu on 2017/11/28.
  */

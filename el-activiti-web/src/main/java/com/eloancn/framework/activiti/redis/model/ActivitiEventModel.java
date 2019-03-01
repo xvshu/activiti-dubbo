@@ -28,7 +28,7 @@ public class ActivitiEventModel implements Serializable {
      * @param taskId 当前处理taskid
      * @param busCodeEnum 系统标识
      */
-    public ActivitiEventModel(EventType eventType, String processDefinitionKey, String userId, String businessKey, String department, String area, List<String> nextUserIds, Map<String, Object> variables, String taskId, BusCodeEnum busCodeEnum) {
+    public ActivitiEventModel(EventType eventType, String processDefinitionKey, String userId, String businessKey, String department, String area, List<String> nextUserIds, Map<String, Object> variables, String taskId, BusCodeEnum busCodeEnum,String areaCode) {
         this.eventType = eventType;
         this.processDefinitionKey = processDefinitionKey;
         this.userId = userId;
@@ -39,6 +39,7 @@ public class ActivitiEventModel implements Serializable {
         this.variables = variables;
         this.taskId = taskId;
         this.busCodeEnum = busCodeEnum;
+        this.areaCode=areaCode;
     }
 
     public ActivitiEventModel() {
@@ -60,6 +61,11 @@ public class ActivitiEventModel implements Serializable {
      * 当前处理人id
      */
     private String userId;
+
+    /**
+     * 区域id
+     */
+    private String areaCode;
 
     /**
      * 业务key
@@ -174,5 +180,13 @@ public class ActivitiEventModel implements Serializable {
 
     public void setTaskId(String taskId) {
         this.taskId = taskId;
+    }
+
+    public String getAreaCode() {
+        return areaCode;
+    }
+
+    public void setAreaCode(String areaCode) {
+        this.areaCode = areaCode;
     }
 }

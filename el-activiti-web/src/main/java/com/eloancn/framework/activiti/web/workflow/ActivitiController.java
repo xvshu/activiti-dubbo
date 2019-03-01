@@ -19,8 +19,10 @@ import javax.xml.stream.XMLStreamReader;
 
 import com.alibaba.fastjson.JSON;
 import com.eloancn.framework.activiti.cmd.JumpActivityCmd;
+import com.eloancn.framework.activiti.entity.workflow.ELHistoricTaskInstance;
 import com.eloancn.framework.activiti.entity.workflow.ELProcessDefinitionEntity;
 import com.eloancn.framework.activiti.util.*;
+import com.eloancn.organ.dto.UserDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.eloancn.framework.activiti.service.activiti.WorkflowProcessDefinitionService;
@@ -33,10 +35,12 @@ import org.activiti.engine.*;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.history.HistoricTaskInstanceQuery;
+import org.activiti.engine.history.HistoricVariableInstance;
 import org.activiti.engine.identity.User;
 import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.activiti.engine.impl.context.Context;
 import org.activiti.engine.impl.interceptor.Command;
+import org.activiti.engine.impl.persistence.entity.HistoricTaskInstanceEntity;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.Model;
 import org.activiti.engine.repository.ProcessDefinition;
@@ -338,12 +342,12 @@ public class ActivitiController {
     @RequestMapping(value = "/task/todo/list",produces="text/html;charset=UTF-8")
     @ResponseBody
     public List<Map<String, Object>> todoList(HttpSession session) throws Exception {
-        User user = UserUtil.getUserFromSession(session);
+        UserDto user = UserUtil.getUserFromSession(session);
         List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
 
         // 已经签收的任务
-        List<Task> todoList = taskService.createTaskQuery().taskAssignee(user.getId()).active().list();
+        List<Task> todoList = taskService.createTaskQuery().taskAssignee(user.getId().toString()).active().list();
         for (Task task : todoList) {
             String processDefinitionId = task.getProcessDefinitionId();
             ProcessDefinition processDefinition = getProcessDefinition(processDefinitionId);
@@ -354,7 +358,7 @@ public class ActivitiController {
         }
 
         // 等待签收的任务
-        List<Task> toClaimList = taskService.createTaskQuery().taskCandidateUser(user.getId()).active().list();
+        List<Task> toClaimList = taskService.createTaskQuery().taskCandidateUser(user.getId().toString()).active().list();
         for (Task task : toClaimList) {
             String processDefinitionId = task.getProcessDefinitionId();
             ProcessDefinition processDefinition = getProcessDefinition(processDefinitionId);
@@ -428,7 +432,7 @@ public class ActivitiController {
      */
     @RequestMapping(value = "processinstance/query/history/findall/{processInstanceId}",produces="text/html;charset=UTF-8")
     @ResponseBody
-    public Page<HistoricTaskInstance> queryHistoryFindAll( @PathVariable("processInstanceId") String processInstanceId,Integer page, Integer rows ,
+    public Page<ELHistoricTaskInstance> queryHistoryFindAll( @PathVariable("processInstanceId") String processInstanceId,Integer page, Integer rows ,
                                 RedirectAttributes redirectAttributes) {
         logger.info("=queryHistoryFindAll=> page:{} rows:{}",page,rows);
         if(page==null){
@@ -438,7 +442,7 @@ public class ActivitiController {
             rows=10;
         }
 
-        Page<HistoricTaskInstance> pageResult = new Page<HistoricTaskInstance>(PageUtil.PAGE_SIZE);
+        Page<ELHistoricTaskInstance> pageResult = new Page<ELHistoricTaskInstance>(PageUtil.PAGE_SIZE);
         pageResult.setPageNo(page);
         pageResult.setPageSize(rows);
 
@@ -448,8 +452,22 @@ public class ActivitiController {
                 .createHistoricTaskInstanceQuery()
                 .processInstanceId(processInstanceId);
         List<HistoricTaskInstance> list = hisQuery.listPage(pageResult.getFirst() - 1, pageResult.getPageSize());
+        List<ELHistoricTaskInstance> listElHi = new ArrayList<>();
+        for(HistoricTaskInstance oneHi : list){
+            ELHistoricTaskInstance out = ELHistoricTaskInstance.cover((HistoricTaskInstanceEntity)oneHi);
+            Map<String, Object> vars = new HashMap<>();
+            List<HistoricVariableInstance> listVars = historyService.createHistoricVariableInstanceQuery().taskId(oneHi.getId()).list();
+            for(HistoricVariableInstance onevar : listVars){
+                vars.put(onevar.getVariableName(),onevar.getValue());
+            }
+            if(vars!=null && !vars.isEmpty()){
+                out.setMsg(vars.containsKey("msg")?(String)vars.get("msg"):"");
+                out.setPass(vars.containsKey("pass")?(Boolean) vars.get("pass"):null);
+            }
+            listElHi.add(out);
+        }
         pageResult.setTotalCount(hisQuery.count());
-        pageResult.setResult(list);
+        pageResult.setResult(listElHi);
         logger.info("=queryHistoryFindAll=> result{}",JSON.toJSONString(pageResult));
 
         return pageResult;

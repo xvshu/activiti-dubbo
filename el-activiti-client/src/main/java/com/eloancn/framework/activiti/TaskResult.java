@@ -1,5 +1,6 @@
 package com.eloancn.framework.activiti;
 
+import com.eloancn.framework.activiti.util.TaskType;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
@@ -26,6 +27,8 @@ public class TaskResult implements Serializable {
 
     // 流程定义
     private ProcessDefinition processDefinition;
+
+    private TaskType taskType;
 
     public Task getTask() {
         return task;
@@ -65,5 +68,13 @@ public class TaskResult implements Serializable {
 
     public void setProcessDefinition(ProcessDefinition processDefinition) {
         this.processDefinition = processDefinition;
+    }
+
+    public TaskType getTaskType() {
+        return taskType;
+    }
+
+    public void setTaskType(TaskType taskType) {
+        this.taskType = taskType;
     }
 }

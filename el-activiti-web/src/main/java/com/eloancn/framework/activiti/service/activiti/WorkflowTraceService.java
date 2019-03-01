@@ -1,11 +1,10 @@
 package com.eloancn.framework.activiti.service.activiti;
 
 import com.eloancn.framework.activiti.util.WorkflowUtils;
-import org.activiti.engine.IdentityService;
-import org.activiti.engine.RepositoryService;
-import org.activiti.engine.RuntimeService;
-import org.activiti.engine.TaskService;
+import org.activiti.engine.*;
 import org.activiti.engine.delegate.Expression;
+import org.activiti.engine.history.HistoricTaskInstance;
+import org.activiti.engine.history.HistoricVariableInstance;
 import org.activiti.engine.identity.User;
 import org.activiti.engine.impl.RepositoryServiceImpl;
 import org.activiti.engine.impl.bpmn.behavior.UserTaskActivityBehavior;
@@ -16,6 +15,7 @@ import org.activiti.engine.impl.task.TaskDefinition;
 import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
+import org.activiti.spring.ProcessEngineFactoryBean;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
@@ -46,6 +46,9 @@ public class WorkflowTraceService {
     @Autowired
     protected IdentityService identityService;
 
+    @Autowired
+    protected HistoryService historyService;
+
     /**
      * 流程跟踪图
      *
@@ -61,6 +64,11 @@ public class WorkflowTraceService {
         }
         ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId)
                 .singleResult();
+
+        List<HistoricTaskInstance> tasks=historyService.createHistoricTaskInstanceQuery().processInstanceId(processInstanceId).finished().list();
+//        List<Task> tasks = taskService.createTaskQuery().processInstanceId(processInstanceId).list();
+
+
         ProcessDefinitionEntity processDefinition = (ProcessDefinitionEntity) ((RepositoryServiceImpl) repositoryService)
                 .getDeployedProcessDefinition(processInstance.getProcessDefinitionId());
         List<ActivityImpl> activitiList = processDefinition.getActivities();//获得当前任务的所有节点
@@ -70,13 +78,20 @@ public class WorkflowTraceService {
 
             boolean currentActiviti = false;
             String id = activity.getId();
+            HistoricTaskInstance taskForActivity = null;
+            for(HistoricTaskInstance oneT : tasks){
+                if(oneT.getTaskDefinitionKey().equals(id)){
+                    taskForActivity=oneT;
+                    break;
+                }
+            }
 
             // 当前节点
             if (id.equals(activityId)) {
                 currentActiviti = true;
             }
 
-            Map<String, Object> activityImageInfo = packageSingleActivitiInfo(activity, processInstance, currentActiviti);
+            Map<String, Object> activityImageInfo = packageSingleActivitiInfo(activity, processInstance, currentActiviti,taskForActivity);
 
             activityInfos.add(activityImageInfo);
         }
@@ -93,7 +108,7 @@ public class WorkflowTraceService {
      * @return
      */
     private Map<String, Object> packageSingleActivitiInfo(ActivityImpl activity, ProcessInstance processInstance,
-                                                          boolean currentActiviti) throws Exception {
+                                                          boolean currentActiviti,HistoricTaskInstance task) throws Exception {
         Map<String, Object> vars = new HashMap<String, Object>();
         Map<String, Object> activityInfo = new HashMap<String, Object>();
         activityInfo.put("currentActiviti", currentActiviti);
@@ -101,7 +116,21 @@ public class WorkflowTraceService {
         setWidthAndHeight(activity, activityInfo);
 
         Map<String, Object> properties = activity.getProperties();
+//        Map<String, Object> acvars = activity.getVariables();
         vars.put("任务类型", WorkflowUtils.parseToZhType(properties.get("type").toString()));
+        Map<String, Object> acvars = new HashMap<>();
+        if(task!=null){
+            List<HistoricVariableInstance> listVars = historyService.createHistoricVariableInstanceQuery().taskId(task.getId()).list();
+            for(HistoricVariableInstance onevar : listVars){
+                acvars.put(onevar.getVariableName(),onevar.getValue());
+            }
+        }
+
+        if(acvars!=null){
+            vars.put("是否通过", WorkflowUtils.parseToZhType(acvars.get("pass")==null ? "暂无":((Boolean)acvars.get("pass"))==true?"通过":"驳回"));
+            vars.put("审核意见", WorkflowUtils.parseToZhType(acvars.get("msg")==null ? "暂无":acvars.get("msg").toString()));
+
+        }
 
         ActivityBehavior activityBehavior = activity.getActivityBehavior();
         logger.debug("activityBehavior={}", activityBehavior);
@@ -145,13 +174,13 @@ public class WorkflowTraceService {
     }
 
     private void setTaskGroup(Map<String, Object> vars, Set<Expression> candidateGroupIdExpressions) {
-        String roles = "";
+        String roles = "[";
         for (Expression expression : candidateGroupIdExpressions) {
             String expressionText = expression.getExpressionText();
-            String roleName = identityService.createGroupQuery().groupId(expressionText).singleResult().getName();
-            roles += roleName;
+            roles += expressionText +",";
         }
-        vars.put("任务所属角色", roles);
+        roles=roles.substring(0,roles.length()-1)+"]";
+        vars.put("任务所属岗位code", roles);
     }
 
     /**
@@ -162,11 +191,12 @@ public class WorkflowTraceService {
      */
     private void setCurrentTaskAssignee(Map<String, Object> vars, Task currentTask) {
         String assignee = currentTask.getAssignee();
-        if (assignee != null) {
-            User assigneeUser = identityService.createUserQuery().userId(assignee).singleResult();
-            String userInfo = assigneeUser.getFirstName() + " " + assigneeUser.getLastName();
-            vars.put("当前处理人", userInfo);
-        }
+//        if (assignee != null) {
+//            User assigneeUser = identityService.createUserQuery().userId(assignee).singleResult();
+//            String userInfo = assigneeUser.getFirstName() + " " + assigneeUser.getLastName();
+//            vars.put("当前处理人", assignee);
+//        }
+        vars.put("当前处理人", assignee);
     }
 
     /**

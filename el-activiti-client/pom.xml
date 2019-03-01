@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.eloancn.activiti</groupId>
     <artifactId>el-activiti-client</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.1.2-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>EL-Activiti-Client</name>
     <description>Eloancn activiti manager client</description>

@@ -38,7 +38,7 @@
 		<property name="password" value="${redis.pass}"></property>
 		<!-- 超时时间 -->
 		<property name="timeout" value="${redis.timeout}"></property>
-		<!-- 超时分区 -->
+		<!-- 分区 -->
 		<property name="database" value="${redis.default.db}"></property>
 	</bean>
 

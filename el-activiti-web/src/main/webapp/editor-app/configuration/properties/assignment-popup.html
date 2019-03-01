@@ -1,3 +1,4 @@
+
 <div class="modal" ng-controller="KisBpmAssignmentPopupCtrl">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -10,16 +11,17 @@
             	<div class="row row-no-gutter">
             		<div class="form-group">
             			<label for="assigneeField">{{'PROPERTY.ASSIGNMENT.ASSIGNEE' | translate}}</label>
-            			<input type="text" id="assigneeField" class="form-control" ng-model="assignment.assignee" placeholder="{{'PROPERTY.ASSIGNMENT.ASSIGNEE_PLACEHOLDER' | translate}}" />
-            		</div>
+                        <input type="text" onclick="show_user_model(this)" id="assigneeField" class="form-control" ng-model="assignment.assignee" placeholder="{{'PROPERTY.ASSIGNMENT.ASSIGNEE_PLACEHOLDER' | translate}}" />
+
+                    </div>
             	</div>
             	
                 <div class="row row-no-gutter">
                     <div class="form-group">
                     	<label for="userField">{{'PROPERTY.ASSIGNMENT.CANDIDATE_USERS' | translate}}</label>
                         <div ng-repeat="candidateUser in assignment.candidateUsers">
-            	            <input id="userField" class="form-control" type="text" ng-model="candidateUser.value" />
-            	            <i class="glyphicon glyphicon-minus clickable-property" ng-click="removeCandidateUserValue($index)"></i>
+            	            <input id="userField" onclick="show_user_model(this)" class="form-control" type="text" ng-model="candidateUser.value" />
+                            <i class="glyphicon glyphicon-minus clickable-property" ng-click="removeCandidateUserValue($index)"></i>
             	            <i ng-if="$index == (assignment.candidateUsers.length - 1)" class="glyphicon glyphicon-plus clickable-property" ng-click="addCandidateUserValue($index)"></i>
                         </div>
                    	</div>
@@ -27,8 +29,9 @@
                     <div class="form-group">
                     	<label for="groupField">{{'PROPERTY.ASSIGNMENT.CANDIDATE_GROUPS' | translate}}</label>
                         <div ng-repeat="candidateGroup in assignment.candidateGroups">
-            	          	<input id="groupField" class="form-control" type="text" ng-model="candidateGroup.value" />
-            	          	<i class="glyphicon glyphicon-minus clickable-property" ng-click="removeCandidateGroupValue($index)"></i>
+            	          	<input id="groupField" onclick="show_qua_model(this)" class="form-control" type="text" ng-model="candidateGroup.value" />
+
+                            <i class="glyphicon glyphicon-minus clickable-property" ng-click="removeCandidateGroupValue($index)"></i>
             	          	<i ng-if="$index == (assignment.candidateGroups.length - 1)" class="glyphicon glyphicon-plus clickable-property" ng-click="addCandidateGroupValue($index)"></i>
                         </div>
                     </div>
@@ -41,4 +44,340 @@
             </div>
         </div>
     </div>
+
+    <!-- 模糊查询用户窗口 start-->
+    <div id="on_win_user" style="display:none;border:1px solid #cccccc;height:370px;width:50%;position:absolute;top:24%;left:24%;z-index:2;background: white;">
+
+        <!-- 标题-->
+        <div style="position: relative;
+background-color: #e8edf1;
+min-height: 60px;
+border-bottom: 1px solid #a4acb9;
+padding: 15px 15px;"
+        >
+            <h2>用户查找</h2>
+        </div>
+        <br/>
+
+        <!-- 操作层-->
+        <label style="margin: 4px 8px;font-size: 14px;">请输入用户真实姓名</label>
+        <br/>
+        <input type="hidden" id="choice_uid">
+        <input id="username_search_text" style="width:85% ;Float:left;padding: 4px 8px;margin-left: 4px;" class="form-control" type="text"  />
+        <input type="button" onclick="search_user()"  style=" width:34px; height:34px;Float:left; border:0; background:url('/img/btn/s133.png') no-repeat; background-size:100% 100%;-moz-background-size:100%;border: 2px solid #ccc" >
+        <br>
+
+        <!-- 待选框-->
+        <!--模糊匹配窗口-->
+        <div id="div_items_users"
+             style="position: relative;
+            width: 85%;
+            height: 100px;
+            border: 1px solid #66afe9;
+            border-top: 0px;
+            overflow: auto;
+            margin-left: 4px;
+            display: none;">
+
+        </div>
+
+        <!-- 底层按钮层-->
+        <div style="margin-top: 15px;
+             padding: 19px 20px 20px;
+             text-align: right;
+             border-top: 1px solid #e5e5e5;">
+
+            <button onclick="hide_user_model()" style="margin-left: 5px;margin-bottom: 0;
+            background-color: #2a8198;border-color: #ffffff;
+            color: #ffffff;font-size: 15px;text-align: center;
+            vertical-align: middle;cursor: pointer;border: 1px solid transparent;
+            padding: 6px 12px;border-radius: 4px;">取消</button>
+
+            &nbsp;&nbsp;
+
+            <button onclick="submit_user_model()" style="margin-left: 5px;margin-bottom: 0;
+            background-color: #2a8198;border-color: #ffffff;
+            color: #ffffff;font-size: 15px;text-align: center;
+            vertical-align: middle;cursor: pointer;border: 1px solid transparent;
+            padding: 6px 12px;border-radius: 4px;">确定</button>
+
+        </div>
+    </div>
+    <div id="over_win_user" style="display: none;width: 100%;height: 100%;opacity:0.8;filter:alpha(opacity=80);position:absolute;top:0;left:0; z-index:1;background: silver;"></div>
+    <!-- 模糊查询用户窗口 end-->
+
+    <!-- 模糊查询职位窗口 start-->
+    <div id="on_win_qua" style="display:none;border:1px solid #cccccc;height:370px;width:50%;position:absolute;top:24%;left:24%;z-index:2;background: white;">
+
+        <!-- 标题-->
+        <div style="position: relative;
+background-color: #e8edf1;
+min-height: 60px;
+border-bottom: 1px solid #a4acb9;
+padding: 15px 15px;"
+        >
+            <h2>岗位查找</h2>
+        </div>
+        <br/>
+
+        <!-- 操作层-->
+        <label style="margin: 4px 8px;font-size: 14px;">请输入岗位名称</label>
+        <br/>
+        <input type="hidden" id="choice_quaId">
+        <input id="qua_name_search_text" style="width:85% ;Float:left;padding: 4px 8px;margin-left: 4px;" class="form-control" type="text"  />
+        <input type="button" onclick="search_qua()"  style=" width:34px; height:34px;Float:left; border:0; background:url('/img/btn/s133.png') no-repeat; background-size:100% 100%;-moz-background-size:100%;border: 2px solid #ccc" >
+        <br>
+
+        <!-- 待选框-->
+        <!--模糊匹配窗口-->
+        <div id="div_items_quas"
+             style="position: relative;
+            width: 85%;
+            height: 100px;
+            border: 1px solid #66afe9;
+            border-top: 0px;
+            overflow: auto;
+            margin-left: 4px;
+            display: none;">
+
+            <div onclick="setQuaId('11','风控经理')" style="width: 90%;height: 20px;margin-top: 1px;margin-left: 4px;font-size: 15px;line-height: 20px;">风控经理</div>
+            <div onclick="setQuaId('22','审核员')" style="width: 90%;height: 20px;margin-top: 1px;margin-left: 4px;font-size: 15px;line-height: 20px;">审核员</div>
+            <div onclick="setQuaId('33','CEO')" style="width: 90%;height: 20px;margin-top: 1px;margin-left: 4px;font-size: 15px;line-height: 20px;">CEO</div>
+
+        </div>
+
+        <!-- 底层按钮层-->
+        <div style="margin-top: 15px;
+             padding: 19px 20px 20px;
+             text-align: right;
+             border-top: 1px solid #e5e5e5;">
+
+            <button onclick="hide_qua_model()" style="margin-left: 5px;margin-bottom: 0;
+            background-color: #2a8198;border-color: #ffffff;
+            color: #ffffff;font-size: 15px;text-align: center;
+            vertical-align: middle;cursor: pointer;border: 1px solid transparent;
+            padding: 6px 12px;border-radius: 4px;">取消</button>
+
+            &nbsp;&nbsp;
+
+            <button onclick="submit_qua_model()" style="margin-left: 5px;margin-bottom: 0;
+            background-color: #2a8198;border-color: #ffffff;
+            color: #ffffff;font-size: 15px;text-align: center;
+            vertical-align: middle;cursor: pointer;border: 1px solid transparent;
+            padding: 6px 12px;border-radius: 4px;">确定</button>
+
+        </div>
+    </div>
+    <div id="over_win_qua" style="display: none;width: 100%;height: 100%;opacity:0.8;filter:alpha(opacity=80);position:absolute;top:0;left:0; z-index:1;background: silver;"></div>
+    <!-- 模糊查询用户窗口 end-->
+
 </div>
+
+
+<script>
+
+    //模糊查询用户操作：
+    var doObj;
+    function search_user(){
+        var username_search_text = document.getElementById('username_search_text');
+        var search_word = username_search_text.value;
+
+        if(search_word==null || search_word ==''){
+            alert("用户真实姓名不能为空")
+            return;
+        }
+
+        var usersHtmls = "";
+
+        var users = ajaxSearchUser(search_word);
+        if(users.length == 0){
+            alert("未找到相关用户，请重新输入！");
+            return;
+        }
+        for(var i in users){
+            usersHtmls = usersHtmls+"<div onclick=\"setUid('"+users[i].id+"','"+users[i].realName+"')\" style=\"width: 90%;height: 20px;margin-top: 1px;margin-left: 4px;font-size: 15px;line-height: 20px;\">"+users[i].realName+"</div>";
+        }
+
+        var div_items_users = document.getElementById("div_items_users");
+        div_items_users.innerHTML =usersHtmls;
+        div_items_users.style.display="block";
+    }
+
+    function ajaxSearchUser(searchWord){
+        var result;
+        jQuery.ajax({
+            url: '/el/user/search/list',
+            cache: false,
+            async: false,
+            data:{'searchWord':searchWord},
+            success: function(data, textStatus) {
+                console.log(data);
+                result = data;
+            }
+        }).done(function(data, textStatus) {
+            console.log("ajax done");
+        }).fail(function(jqXHR, textStatus, error){
+            console.error(' fail layout['+processDefinitionKey+'] failure: ', textStatus, 'error: ', error, jqXHR);
+        });
+        return result;
+    }
+
+    function setUid(uid,uname){
+        var choice_uid = document.getElementById("choice_uid");
+        choice_uid.value=uid;
+
+        var username_search_text = document.getElementById('username_search_text');
+        username_search_text.value=uname;
+
+        var div_items_users = document.getElementById("div_items_users");
+        div_items_users.style.display="none";
+    }
+
+    function submit_user_model(){
+        var choice_uid = document.getElementById("choice_uid");
+        var uid = choice_uid.value;
+        if (uid==null || uid ==''){
+            alert("您还未选择用户");
+            return;
+        }
+        doObj.value=uid;
+        if ("createEvent" in document) {
+            var evt = document.createEvent("HTMLEvents");
+            evt.initEvent("change", false, true);
+            doObj.dispatchEvent(evt);
+        } else {
+            doObj.fireEvent("onchange");
+        }
+        doObj=null;
+
+        hide_user_model();
+    }
+
+    function show_user_model(obj)
+    {
+        doObj=obj;
+        var choice_uid = document.getElementById("choice_uid");
+        choice_uid.value='';
+
+        var username_search_text = document.getElementById('username_search_text');
+        username_search_text.value='';
+
+
+        var on_win_user = document.getElementById('on_win_user');
+        var over_win_user = document.getElementById('over_win_user');
+        on_win_user.style.display = "block";
+        over_win_user.style.display = "block";
+    }
+    function hide_user_model()
+    {
+        doObj=null;
+        var on_win_user = document.getElementById('on_win_user');
+        var over_win_user = document.getElementById('over_win_user');
+        on_win_user.style.display = "none";
+        over_win_user.style.display = "none";
+    }
+
+    //模糊查询岗位操作：
+    var doQuaObj;
+    function search_qua(){
+        var qua_name_search_text = document.getElementById('qua_name_search_text');
+        var search_word = qua_name_search_text.value;
+
+        if(search_word==null || search_word ==''){
+            alert("岗位名称不能为空")
+            return;
+        }
+
+        var quasHtmls = "";
+
+        var quas = ajaxSearchQuas(search_word);
+        if(quas.length == 0){
+            alert("未找到相关信息，请重新输入！");
+            return;
+        }
+        for(var i in quas){
+            quasHtmls = quasHtmls+"<div onclick=\"setQuaId('"+quas[i].id+"','"+quas[i].realName+"')\" style=\"width: 90%;height: 20px;margin-top: 1px;margin-left: 4px;font-size: 15px;line-height: 20px;\">"+quas[i].realName+"</div>";
+        }
+
+        var div_items_quas = document.getElementById("div_items_quas");
+        div_items_quas.innerHTML=quasHtmls;
+        div_items_quas.style.display="block";
+    }
+
+    function ajaxSearchQuas(searchWord){
+        var result;
+        jQuery.ajax({
+            url: '/el/user/quas/search/list',
+            cache: false,
+            async: false,
+            data:{'searchWord':searchWord},
+            success: function(data, textStatus) {
+                console.log(data);
+                result = data;
+            }
+        }).done(function(data, textStatus) {
+            console.log("ajax done");
+        }).fail(function(jqXHR, textStatus, error){
+            console.error(' fail layout['+processDefinitionKey+'] failure: ', textStatus, 'error: ', error, jqXHR);
+        });
+        return result;
+    }
+
+    function setQuaId(qid,qname){
+        var choice_quaId = document.getElementById("choice_quaId");
+        choice_quaId.value=qid;
+
+        var qua_name_search_text = document.getElementById('qua_name_search_text');
+        qua_name_search_text.value=qname;
+
+        var div_items_quas = document.getElementById("div_items_quas");
+        div_items_quas.style.display="none";
+    }
+
+    function submit_qua_model(){
+        var choice_quaId = document.getElementById("choice_quaId");
+        var qid = choice_quaId.value;
+        if (qid==null || qid ==''){
+            alert("您还未选择岗位");
+            return;
+        }
+        doQuaObj.value=qid;
+        if ("createEvent" in document) {
+            var evt = document.createEvent("HTMLEvents");
+            evt.initEvent("change", false, true);
+            doObj.dispatchEvent(evt);
+        } else {
+            doObj.fireEvent("onchange");
+        }
+        doQuaObj=null;
+
+        hide_qua_model();
+    }
+
+    function show_qua_model(obj)
+    {
+        doQuaObj=obj;
+        var choice_quaId = document.getElementById("choice_quaId");
+        choice_quaId.value='';
+
+        var qua_name_search_text = document.getElementById('qua_name_search_text');
+        qua_name_search_text.value='';
+
+
+        var on_win_qua = document.getElementById('on_win_qua');
+        var over_win_qua = document.getElementById('over_win_qua');
+        on_win_qua.style.display = "block";
+        over_win_qua.style.display = "block";
+    }
+    function hide_qua_model()
+    {
+        doQuaObj=null;
+        var on_win_qua = document.getElementById('on_win_qua');
+        var over_win_qua = document.getElementById('over_win_qua');
+        on_win_qua.style.display = "none";
+        over_win_qua.style.display = "none";
+    }
+
+
+
+</script>

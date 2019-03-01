@@ -2,6 +2,10 @@ package com.eloancn.framework.activiti.web.identify;
 
 import com.eloancn.framework.activiti.util.UserUtil;
 import com.eloancn.framework.activiti.util.demo.ActivitiUtils;
+import com.eloancn.framework.sevice.api.ResultDTO;
+import com.eloancn.organ.api.UserService;
+import com.eloancn.organ.common.OrganStatusEnum;
+import com.eloancn.organ.dto.UserDto;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.User;
@@ -30,6 +34,8 @@ public class UseController {
     // Activiti Identify Service
     private IdentityService identityService;
 
+
+
     /**
      * 登录系统
      *
@@ -41,29 +47,21 @@ public class UseController {
     @RequestMapping(value = "/logon")
     public String logon(@RequestParam("username") String userName, @RequestParam("password") String password, HttpSession session) {
         logger.debug("logon request: {username={}, password={}}", userName, password);
-        boolean checkPassword = identityService.checkPassword(userName, password);
-        if (checkPassword) {
 
-            // read user from database
-            User user = identityService.createUserQuery().userId(userName).singleResult();
-            UserUtil.saveUserToSession(session, user);
-            ActivitiUtils.saveUserToSession(session, "demo-user");
+        boolean checkPassword =false;
 
-            List<Group> groupList = identityService.createGroupQuery().groupMember(userName).list();
-            session.setAttribute("groups", groupList);
+        //todo:查询用户
 
-            String[] groupNames = new String[groupList.size()];
-            for (int i = 0; i < groupNames.length; i++) {
-                System.out.println(groupList.get(i).getName());
-                groupNames[i] = groupList.get(i).getName();
-            }
-
-            session.setAttribute("groupNames", ArrayUtils.toString(groupNames));
-
-            return "redirect:/main/index";
-        } else {
-            return "redirect:/login?error=true";
+        if(userName != null && userName.equals("admin")
+                && password != null && password.equals("admin") ){
+            checkPassword=true;
+            ActivitiUtils.saveUserIdToSession(session, String.valueOf(userName));
         }
+
+        if (checkPassword) {
+            return "redirect:/main/index";
+        }
+        return  "";
     }
 
     @RequestMapping(value = "/logout")
@@ -76,5 +74,8 @@ public class UseController {
     public void setIdentityService(IdentityService identityService) {
         this.identityService = identityService;
     }
+
+
+
 
 }

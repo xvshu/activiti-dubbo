@@ -1,9 +1,11 @@
 package com.eloancn.framework.activiti.service;
 
+import com.eloancn.framework.activiti.dto.WorkFlowDto;
 import com.eloancn.framework.activiti.util.Page;
 import com.eloancn.framework.activiti.TaskResult;
 import com.eloancn.organ.common.BusCodeEnum;
 import org.activiti.engine.history.HistoricTaskInstance;
+import org.activiti.engine.impl.persistence.entity.VariableInstance;
 
 import java.util.List;
 import java.util.Map;
@@ -25,6 +27,19 @@ public interface ElActivitiService {
      * @return
      */
     public void startWorkflow(String processDefinitionKey,String userId,String businessKey, List<String> nextUserId,Map<String, Object> variables,BusCodeEnum busCodeEnum) ;
+
+    /**
+     * 启动流程
+     * @param workFlowDto 任务参数对象
+     *  processDefinitionKey 流程定义key（必须）
+     *  userId 启动流程用户id（必须）
+     *  businessKey 流程业务唯一key（必须）
+     *  nextUserId 下一个执行人的用户id
+     *  variables 流程变量 Map<String, Object>
+     *  busCodeEnum 系统标识
+     * @return
+     */
+    public void startWorkflow(WorkFlowDto workFlowDto) ;
 
     /**
      *
@@ -80,10 +95,52 @@ public interface ElActivitiService {
     public void nodeComplete(String userID,String taskId, Map<String, Object> variables,List<String> nextUserId,BusCodeEnum busCodeEnum) ;
 
     /**
+     * 完成某次任务节点
+     * @param workFlowDto 流程参数对象
+     *  userID 流程处理人
+     *  taskId 任务节点id（必须）
+     *  variables 任务节点参数Map<String, Object>
+     *  nextUserId 下一个执行人的用户id（必须）
+     *  busCodeEnum 系统标识
+     * @return
+     */
+    public void nodeComplete(WorkFlowDto workFlowDto) ;
+
+    /**
+     * 完成某次任务节点
+     *
+     *  userID 流程处理人
+     *  taskId 任务节点id（必须）
+     * @return
+     */
+    public void msgComplete(String userID,String msgId,BusCodeEnum busCodeEnum) ;
+
+    /**
+     * 完成某次任务节点
+     * @param workFlowDto 流程参数对象
+     *  userID 流程处理人
+     *  taskId 任务节点id（必须）
+     *  variables 任务节点参数Map<String, Object>
+     *  nextUserId 下一个执行人的用户id（必须）
+     *  busCodeEnum 系统标识
+     * @return
+     */
+    public void msgComplete(WorkFlowDto workFlowDto) ;
+
+    /**
      * 查询某流程历史记录
      * @param processInstanceId 流程实例id
      * @return
      */
     public List<HistoricTaskInstance> queryHistoricTask(String processInstanceId) ;
+
+
+    /**
+     * 获取流程变量
+     * @param processInstanceId 流程id
+     * @return
+     */
+    public Map<String, Object> getVariables(String processInstanceId);
+
 
 }

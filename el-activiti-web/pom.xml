@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.eloancn.activiti</groupId>
     <artifactId>el-activiti-web</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.1.2-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>EL-Activiti-WEB</name>
     <description>Eloancn activiti manager</description>
@@ -36,7 +36,7 @@
         <log4j.version>1.2.17</log4j.version>
         <jetty.version>8.1.15.v20140411</jetty.version>
         <h2.version>1.4.180</h2.version>
-        <junit.version>4.10</junit.version>
+        <junit.version>4.12</junit.version>
         <mockito.version>1.9.0</mockito.version>
         <powermock.version>1.4.12</powermock.version>
         <activiti.version>5.22.0</activiti.version>
@@ -50,10 +50,24 @@
     <!-- 依赖项定义 -->
     <dependencies>
 
+        <!-- 用户中心-->
+        <dependency>
+            <groupId>com.eloancn</groupId>
+            <artifactId>nback-system-api</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <!-- 产品工厂 -->
+        <dependency>
+            <groupId>com.eloancn</groupId>
+            <artifactId>back-product-factory-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
         <dependency>
             <groupId>com.eloancn.activiti</groupId>
             <artifactId>el-activiti-client</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.1.2-SNAPSHOT</version>
         </dependency>
 
         <!--统一配置映射管理-->
@@ -606,7 +620,7 @@
         <dependency>
             <groupId>com.eloancn.organ</groupId>
             <artifactId>organ-api</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>1.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.eloancn.message</groupId>
@@ -614,6 +628,32 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <!-- TEST end -->
+
+        <dependency>
+            <groupId>com.eloancn.framework</groupId>
+            <artifactId>el-cas</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+
+        <!-- disconf -->
+        <dependency>
+            <groupId>com.baidu.disconf</groupId>
+            <artifactId>disconf-core</artifactId>
+            <version>2.6.30</version>
+        </dependency>
+        <dependency>
+            <groupId>com.baidu.disconf</groupId>
+            <artifactId>disconf-client</artifactId>
+            <version>2.6.30</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.dianping.cat</groupId>
+            <artifactId>cat-client</artifactId>
+            <version>1.3.6-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -791,16 +831,16 @@
 
                 <!-- driver configs -->
                 <jdbc.driver>com.mysql.jdbc.Driver</jdbc.driver>
-                <jdbc.url><![CDATA[jdbc:mysql://10.1.111.183:40238/eloan_activity?useUnicode=true&amp;characterEncoding=utf-8]]></jdbc.url>
-                <jdbc.username>serial_a</jdbc.username>
-                <jdbc.password>eloan_serialOhgpDz2</jdbc.password>
+                <jdbc.url><![CDATA[jdbc:mysql://10.1.111.182:40238/eloancn_activiti?useUnicode=true&amp;characterEncoding=utf-8]]></jdbc.url>
+                <jdbc.username>activiti_a</jdbc.username>
+                <jdbc.password>PT1b9iTOaI3H</jdbc.password>
                 <hibernate.dialect>org.hibernate.dialect.MySQL5InnoDBDialect</hibernate.dialect>
 
-                <saf-zk-address>10.1.112.211:12192,10.1.113.112:12192,10.1.114.87:12192</saf-zk-address>
+                <zk-address>10.1.112.211:12192,10.1.113.112:12192,10.1.114.87:12192</zk-address>
 
 
-                <redis.host>192.168.0.79</redis.host>
-                <redis.port>6379</redis.port>
+                <redis.host>10.1.112.60</redis.host>
+                <redis.port>16379</redis.port>
                 <redis.pass></redis.pass>
                 <redis.timeout>100000</redis.timeout>
                 <redis.default.db>0</redis.default.db>
@@ -817,4 +857,30 @@
         </profile>
 
     </profiles>
+
+
+    <repositories>
+        <repository>
+            <id>nexus-releases</id>
+            <name>releases</name>
+            <url>http://192.168.3.232:8081/nexus/content/repositories/releases</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>nexus-snapshots</id>
+            <name>snapshots</name>
+            <url>http://192.168.3.232:8081/nexus/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 </project>

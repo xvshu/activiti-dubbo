@@ -15,6 +15,11 @@ function dateUnixFormat(time) {
     var Y = unixTimestamp.getFullYear()
     var M = ((unixTimestamp.getMonth() + 1) > 10 ? (unixTimestamp.getMonth() + 1) : '0' + (unixTimestamp.getMonth() + 1))
     var D = (unixTimestamp.getDate() > 10 ? unixTimestamp.getDate() : '0' + unixTimestamp.getDate())
-    var toDay = Y + '-' + M + '-' + D
+
+    var H = (unixTimestamp.getHours() > 10 ? unixTimestamp.getHours() : '0' + unixTimestamp.getHours())
+    var mm = (unixTimestamp.getMinutes() > 10 ? unixTimestamp.getMinutes() : '0' + unixTimestamp.getMinutes())
+
+
+    var toDay = Y + '-' + M + '-' + D + ' '+H+':'+mm;
     return toDay
 }

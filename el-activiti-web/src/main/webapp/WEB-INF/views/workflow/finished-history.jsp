@@ -39,6 +39,17 @@
             });
         }
 
+		function formatPass(val,row,index){
+			if(val==null){
+				return "";
+			}
+			if(val==true || val=="true"){
+				return "通过";
+			}else{
+				return "驳回";
+			}
+		}
+
         function formatTime(val,row,index){
             if(val==null){
                 return "";
@@ -73,8 +84,9 @@
 			<th data-options="field:'id'">任务ID</th>
 			<th data-options="field:'name'">任务名称</th>
 			<th data-options="field:'assignee'">处理人ID</th>
-			<th data-options="field:'createTime',formatter:formatTime">创建时间</th>
-			<th data-options="field:'endTime',formatter:formatTime">结束时间</th>
+			<th data-options="field:'pass',formatter:formatPass">是否通过</th>
+			<th data-options="field:'msg'">处理意见</th>
+			<th data-options="field:'startTime',formatter:formatTime">处理时间</th>
 		</tr>
 		</thead>
 	</table>

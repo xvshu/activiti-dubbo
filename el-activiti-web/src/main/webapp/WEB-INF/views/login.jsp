@@ -38,10 +38,18 @@
 
 <body>
 <c:if test="${not empty param.error}">
-    <%--<h2 id="error" style="text-align: center;color: red;font-size:50px;">用户名或密码错误！！！</h2>--%>
-    <script type = "text/javascript" >
-        alert("用户名或密码错误！！！");
-    </script>
+    <c:if test="${param.error == 'nouser'}">
+        <%--<h2 id="error" style="text-align: center;color: red;font-size:50px;">用户名或密码错误！！！</h2>--%>
+        <script type = "text/javascript" >
+            alert("用户名或密码错误！");
+        </script>
+    </c:if>
+    <c:if test="${param.error == 'wrongstats'}">
+        <%--<h2 id="error" style="text-align: center;color: red;font-size:50px;">用户名或密码错误！！！</h2>--%>
+        <script type = "text/javascript" >
+            alert("该用户无权登录！");
+        </script>
+    </c:if>
 </c:if>
 <c:if test="${not empty param.timeout}">
     <%--<h2 id="error" style="text-align: center;color: red;font-size:50px;">未登录或超时！！！</h2>--%>

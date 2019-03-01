@@ -5,10 +5,17 @@
     <title>统一架构</title>
     <%@ include file="/common/global.jsp"%>
 
+    <style>
+        body{
+            background:url(${ctx }/img/bg.jpg)  no-repeat center center;
+            background-size:cover;
+            background-attachment:fixed;
+            background-color:#CCCCCC;
+        }
+    </style>
 </head>
 
 <body>
-    <img src="${ctx }/img/bg.jpg" style="width:100%;height:90%" alt="翼龙贷配置中心欢迎您" />
 </body>
 
 </html>

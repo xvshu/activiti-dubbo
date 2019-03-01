@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import com.eloancn.framework.activiti.util.PageUtil;
 import com.eloancn.framework.activiti.util.Page;
 import com.eloancn.framework.activiti.util.UserUtil;
+import com.eloancn.organ.dto.UserDto;
 import org.activiti.engine.FormService;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.IdentityService;
@@ -194,14 +195,14 @@ public class DynamicFormController {
 
         logger.debug("start form parameters: {}", formProperties);
 
-        User user = UserUtil.getUserFromSession(request.getSession());
+        UserDto user = UserUtil.getUserFromSession(request.getSession());
 
         // 用户未登录不能操作，实际应用使用权限框架实现，例如Spring Security、Shiro等
-        if (user == null || StringUtils.isBlank(user.getId())) {
-            return "redirect:/login?timeout=true";
+        if (user == null || StringUtils.isBlank(String.valueOf(user.getId()))) {
+            return "redirect:/login";
         }
         try {
-            identityService.setAuthenticatedUserId(user.getId());
+            identityService.setAuthenticatedUserId(String.valueOf(user.getId()));
             formService.submitTaskFormData(taskId, formProperties);
         } finally {
             identityService.setAuthenticatedUserId(null);
@@ -236,14 +237,14 @@ public class DynamicFormController {
 
         logger.debug("start form parameters: {}", formProperties);
 
-        User user = UserUtil.getUserFromSession(request.getSession());
+        UserDto user = UserUtil.getUserFromSession(request.getSession());
         // 用户未登录不能操作，实际应用使用权限框架实现，例如Spring Security、Shiro等
-        if (user == null || StringUtils.isBlank(user.getId())) {
-            return "redirect:/login?timeout=true";
+        if (user == null ) {
+            return "redirect:/login";
         }
         ProcessInstance processInstance = null;
         try {
-            identityService.setAuthenticatedUserId(user.getId());
+            identityService.setAuthenticatedUserId(String.valueOf(user.getId()));
             processInstance = formService.submitStartFormData(processDefinitionId, formProperties);
             logger.debug("start a processinstance: {}", processInstance);
         } finally {
@@ -264,7 +265,7 @@ public class DynamicFormController {
     public ModelAndView taskList(@RequestParam(value = "processType", required = false) String processType,
                                  HttpServletRequest request) {
         ModelAndView mav = new ModelAndView("/form/dynamic/dynamic-form-task-list");
-        User user = UserUtil.getUserFromSession(request.getSession());
+        UserDto user = UserUtil.getUserFromSession(request.getSession());
 
         List<Task> tasks = new ArrayList<Task>();
 
@@ -275,19 +276,19 @@ public class DynamicFormController {
              */
 
             List<Task> dynamicFormTasks = taskService.createTaskQuery().processDefinitionKey("leave-dynamic-from")
-                    .taskCandidateOrAssigned(user.getId()).active().orderByTaskId().desc().list();
+                    .taskCandidateOrAssigned(user.getId().toString()).active().orderByTaskId().desc().list();
 
             List<Task> dispatchTasks = taskService.createTaskQuery().processDefinitionKey("dispatch")
-                    .taskCandidateOrAssigned(user.getId()).active().orderByTaskId().desc().list();
+                    .taskCandidateOrAssigned(user.getId().toString()).active().orderByTaskId().desc().list();
 
             List<Task> leaveJpaTasks = taskService.createTaskQuery().processDefinitionKey("leave-jpa")
-                    .taskCandidateOrAssigned(user.getId()).active().orderByTaskId().desc().list();
+                    .taskCandidateOrAssigned(user.getId().toString()).active().orderByTaskId().desc().list();
 
             tasks.addAll(dynamicFormTasks);
             tasks.addAll(dispatchTasks);
             tasks.addAll(leaveJpaTasks);
         } else {
-            tasks = taskService.createTaskQuery().taskCandidateOrAssigned(user.getId()).active().orderByTaskId().desc().list();
+            tasks = taskService.createTaskQuery().taskCandidateOrAssigned(user.getId().toString()).active().orderByTaskId().desc().list();
         }
 
         mav.addObject("tasks", tasks);
@@ -301,7 +302,7 @@ public class DynamicFormController {
     public String claim(@PathVariable("id") String taskId, HttpSession session,
                         HttpServletRequest request,
                         RedirectAttributes redirectAttributes) {
-        String userId = UserUtil.getUserFromSession(session).getId();
+        String userId = UserUtil.getUserFromSession(session).getId().toString();
         taskService.claim(taskId, userId);
         redirectAttributes.addFlashAttribute("message", "任务已签收");
         return "redirect:/form/dynamic/task/list?processType=" + StringUtils.defaultString(request.getParameter("processType"));

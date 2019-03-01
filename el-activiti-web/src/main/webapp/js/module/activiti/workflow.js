@@ -120,7 +120,7 @@ function graphTrace(options) {
             resizable: false,
             dragable: false,
             open: function() {
-                $('#workflowTraceDialog').dialog('option', 'title', '查看流程（按ESC键可以关闭）');
+                $('#workflowTraceDialog').dialog('option', 'title', '查看流程');
                 $('#workflowTraceDialog').css('padding', '0.2em');
                 $('#workflowTraceDialog .ui-accordion-content').css('padding', '0.2em').height($('#workflowTraceDialog').height() - 75);
 

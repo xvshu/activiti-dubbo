@@ -150,8 +150,10 @@ public class ModelController {
             BpmnModel model = new BpmnJsonConverter().convertToBpmnModel(modelNode);
             bpmnBytes = new BpmnXMLConverter().convertToXML(model);
 
+            logger.info("xml is {}",new String(bpmnBytes,"UTF-8"));
+
             String processName = modelData.getName() + ".bpmn20.xml";
-            Deployment deployment = repositoryService.createDeployment().name(modelData.getName()).addString(processName, new String(bpmnBytes)).deploy();
+            Deployment deployment = repositoryService.createDeployment().name(modelData.getName()).addString(processName, new String(bpmnBytes,"UTF-8")).deploy();
             result="部署成功，部署ID=" + deployment.getId();
         } catch (Exception e) {
             logger.error("根据模型部署流程失败：modelId={}", modelId, e);

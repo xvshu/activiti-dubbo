@@ -5,51 +5,23 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 	http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd" default-lazy-init="true">
 
-    <!-- 组织机构区域服务 -->
-    <dubbo:reference interface="com.eloancn.organ.api.AreaService" id="areaOrganService" group="${organ-group}" version="${organ-version}"
-                     timeout="60000" protocol="dubbo" registry="elZookeeper" lazy="true" check="false" retries="0" />
 
-    <!-- 组织机构部门服务 -->
-    <dubbo:reference interface="com.eloancn.organ.api.DepartmentService" id="departmentOrganService" group="${organ-group}" version="${organ-version}"
-                     timeout="60000" protocol="dubbo" registry="elZookeeper" lazy="true" check="false" retries="0" />
+    <!-- 产品 -->
+    <dubbo:reference id="productApi"  interface="com.eloancn.backProductFactory.api.product.ProductApi"
+                     group="back-product-soa" version="1.0.0" timeout="1200000" protocol="dubbo" registry="elZookeeper" check="false" lazy="true" retries="0" />
 
-    <!-- 组织机构职务服务 -->
-    <dubbo:reference interface="com.eloancn.organ.api.FunctionService" id="functionOrganService" group="${organ-group}" version="${organ-version}"
-                     timeout="60000" protocol="dubbo" registry="elZookeeper" lazy="true" check="false" retries="0" />
 
-    <!-- 组织机构职位服务 -->
-    <dubbo:reference interface="com.eloancn.organ.api.PostService" id="postOrganService" group="${organ-group}" version="${organ-version}"
-                     timeout="60000" protocol="dubbo" registry="elZookeeper" lazy="true" check="false" retries="0" />
+    <!-- 用户 -->
+    <dubbo:reference id="sysUserNewAPI"  interface="com.eloancn.nback.system.api.SysUserNewAPI"
+                     group="new-nback-system-soa-cat" version="2.0.0" timeout="1200000" protocol="dubbo" registry="elZookeeper" check="false" lazy="true" retries="0" />
+    <!-- 岗位-->
+    <dubbo:reference id="sysQuartersAPI"  interface="com.eloancn.nback.system.api.SysQuartersAPI"
+                     group="new-nback-system-soa-cat" version="2.0.0" timeout="1200000" protocol="dubbo" registry="elZookeeper" check="false" lazy="true" retries="0" />
 
-    <!-- 组织机构角色服务 -->
-    <dubbo:reference interface="com.eloancn.organ.api.RoleService" id="roleOrganService" group="${organ-group}" version="${organ-version}"
-                     timeout="60000" protocol="dubbo" registry="elZookeeper" lazy="true" check="false" retries="0" />
 
-    <!-- 组织机构用户服务 -->
-    <dubbo:reference interface="com.eloancn.organ.api.UserService" id="userOrganService" group="${organ-group}" version="${organ-version}"
-                     timeout="60000" protocol="dubbo" registry="elZookeeper" lazy="true" check="false" retries="0" />
+    <!-- 区域-->
+    <dubbo:reference id="sysUserAreaNewAPI"  interface="com.eloancn.nback.system.api.SysUserAreaNewAPI"
+                     group="new-nback-system-soa-cat" version="2.0.0" timeout="1200000" protocol="dubbo" registry="elZookeeper" check="false" lazy="true" retries="0" />
 
-    <!-- 职务角色关系服务 -->
-    <dubbo:reference interface="com.eloancn.organ.api.FunctionRoleService" id="funRoleOrganService" group="${organ-group}" version="${organ-version}"
-                     timeout="60000" protocol="dubbo" registry="elZookeeper" lazy="true" check="false" retries="0" />
-
-    <!-- 消息服务 -->
-    <dubbo:reference interface="com.eloancn.message.api.MessageRecService" id="messageRecService" group="${message-group}" version="${message-version}"
-                     timeout="60000" protocol="dubbo" registry="elZookeeper" lazy="true" check="false" retries="0" />
-    <dubbo:reference interface="com.eloancn.message.api.MessageSendService" id="messageSendService" group="${message-group}" version="${message-version}"
-                     timeout="60000" protocol="dubbo" registry="elZookeeper" lazy="true" check="false" retries="0" />
-
-    <!-- 统一配置映射部分 -->
-    <!-- 容易配置应声管理服务 -->
-    <dubbo:reference interface="com.el.config.api.ConfigMapService" id="configMapManager" group="el-config-soa" version="1.1.0"
-                     timeout="60000" protocol="dubbo" registry="elZookeeper" lazy="true" check="false" retries="0" />
-
-    <!-- 权限管理服务 -->
-    <dubbo:reference interface="com.eloancn.organ.api.RightService" id="rightService" group="${organ-group}" version="${organ-version}"
-                     timeout="60000" protocol="dubbo" registry="elZookeeper" lazy="true" check="false" retries="0" />
-
-    <!-- 角色权限管理服务 -->
-    <dubbo:reference interface="com.eloancn.organ.api.RoleRightService" id="roleRightService" group="${organ-group}" version="${organ-version}"
-                     timeout="60000" protocol="dubbo" registry="elZookeeper" lazy="true" check="false" retries="0" />
 
 </beans>

@@ -39,6 +39,29 @@ public class DisconfController {
         return mav;
     }
 
+    /**
+     * 环境列表
+     */
+    @RequestMapping(value = "env")
+    public ModelAndView envList(HttpServletRequest request,String appId,String envId) {
+        ModelAndView mav = new ModelAndView("disconf/dis_env");
+        mav.addObject("appId",appId);
+        mav.addObject("envId",envId);
+        return mav;
+    }
+
+
+    /**
+     * 版本列表
+     */
+    @RequestMapping(value = "version")
+    public ModelAndView envVersionList(HttpServletRequest request,String appId,String envId,String version) {
+        ModelAndView mav = new ModelAndView("disconf/dis_env_version");
+        mav.addObject("appId",appId);
+        mav.addObject("envId",envId);
+        mav.addObject("version",version);
+        return mav;
+    }
 
 
 }
