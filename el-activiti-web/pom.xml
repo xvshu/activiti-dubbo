@@ -2,19 +2,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.eloancn.activiti</groupId>
-    <artifactId>el-activiti-web</artifactId>
+    <groupId>com.xvshu.activiti</groupId>
+    <artifactId>xs-activiti-web</artifactId>
     <version>1.1.2-SNAPSHOT</version>
     <packaging>war</packaging>
-    <name>EL-Activiti-WEB</name>
-    <description>Eloancn activiti manager</description>
+    <name>xs-Activiti-WEB</name>
+    <description>xvshu activiti manager</description>
 
     <developers>
         <developer>
-            <id>eloancn</id>
-            <name>eloancn</name>
-            <email>op@eloancn.com</email>
-            <url>https://www.eloancn.com/</url>
+            <id>xvshu</id>
+            <name>xvshu</name>
+            <email>op@xvshu.com</email>
+            <url>https://www.xvshu.com/</url>
             <timezone>8</timezone>
         </developer>
     </developers>
@@ -52,33 +52,33 @@
 
         <!-- 用户中心-->
         <dependency>
-            <groupId>com.eloancn</groupId>
+            <groupId>com.xvshu</groupId>
             <artifactId>nback-system-api</artifactId>
             <version>1.0.1-SNAPSHOT</version>
         </dependency>
 
         <!-- 产品工厂 -->
         <dependency>
-            <groupId>com.eloancn</groupId>
+            <groupId>com.xvshu</groupId>
             <artifactId>back-product-factory-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>com.eloancn.activiti</groupId>
-            <artifactId>el-activiti-client</artifactId>
+            <groupId>com.xvshu.activiti</groupId>
+            <artifactId>xs-activiti-client</artifactId>
             <version>1.1.2-SNAPSHOT</version>
         </dependency>
 
         <!--统一配置映射管理-->
         <dependency>
             <groupId>com.el.config</groupId>
-            <artifactId>el-config-api</artifactId>
+            <artifactId>xs-config-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>com.eloancn.framework</groupId>
+            <groupId>com.xvshu.framework</groupId>
             <artifactId>el</artifactId>
             <version>1.0-SNAPSHOT</version>
             <exclusions>
@@ -618,20 +618,20 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.eloancn.organ</groupId>
+            <groupId>com.xvshu.organ</groupId>
             <artifactId>organ-api</artifactId>
             <version>1.4-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.eloancn.message</groupId>
+            <groupId>com.xvshu.message</groupId>
             <artifactId>message-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <!-- TEST end -->
 
         <dependency>
-            <groupId>com.eloancn.framework</groupId>
-            <artifactId>el-cas</artifactId>
+            <groupId>com.xvshu.framework</groupId>
+            <artifactId>xs-cas</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
@@ -734,7 +734,7 @@
             </plugin>
         </plugins>
 
-        <finalName>eloancn-activiti</finalName>
+        <finalName>xvshu-activiti</finalName>
     </build>
 
     <profiles>
@@ -792,7 +792,7 @@
 
                 <!-- driver configs -->
                 <jdbc.driver>com.mysql.jdbc.Driver</jdbc.driver>
-                <jdbc.url><![CDATA[jdbc:mysql://192.168.2.150:3316/eloancn_activiti?useUnicode=true&amp;characterEncoding=utf-8]]></jdbc.url>
+                <jdbc.url><![CDATA[jdbc:mysql://192.168.2.150:3316/xvshu_activiti?useUnicode=true&amp;characterEncoding=utf-8]]></jdbc.url>
                 <jdbc.username>developer</jdbc.username>
                 <jdbc.password>developer_select</jdbc.password>
                 <hibernate.dialect>org.hibernate.dialect.MySQL5InnoDBDialect</hibernate.dialect>
@@ -831,7 +831,7 @@
 
                 <!-- driver configs -->
                 <jdbc.driver>com.mysql.jdbc.Driver</jdbc.driver>
-                <jdbc.url><![CDATA[jdbc:mysql://10.1.111.182:40238/eloancn_activiti?useUnicode=true&amp;characterEncoding=utf-8]]></jdbc.url>
+                <jdbc.url><![CDATA[jdbc:mysql://10.1.111.182:40238/xvshu_activiti?useUnicode=true&amp;characterEncoding=utf-8]]></jdbc.url>
                 <jdbc.username>activiti_a</jdbc.username>
                 <jdbc.password>PT1b9iTOaI3H</jdbc.password>
                 <hibernate.dialect>org.hibernate.dialect.MySQL5InnoDBDialect</hibernate.dialect>

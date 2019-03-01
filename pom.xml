@@ -2,26 +2,26 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.eloancn.activiti</groupId>
-    <artifactId>el-activiti</artifactId>
+    <groupId>com.xvshu.activiti</groupId>
+    <artifactId>xs-activiti</artifactId>
     <version>1.1.2-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>EL-Activiti</name>
-    <description>Eloancn Activiti Framework</description>
+    <name>xs-Activiti</name>
+    <description>xvshu Activiti Framework</description>
 
     <developers>
         <developer>
-            <id>eloancn</id>
-            <name>eloancn</name>
-            <email>op@eloancn.com</email>
-            <url>https://www.eloancn.com/</url>
+            <id>xvshu</id>
+            <name>xvshu</name>
+            <email>op@xvshu.com</email>
+            <url>https://www.xvshu.com/</url>
             <timezone>8</timezone>
         </developer>
     </developers>
 	
 	<modules>
-		<module>el-activiti-web</module>
-		<module>el-activiti-client</module>
+		<module>xs-activiti-web</module>
+		<module>xs-activiti-client</module>
 	</modules>
 
     

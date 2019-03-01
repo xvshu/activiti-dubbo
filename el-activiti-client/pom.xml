@@ -2,19 +2,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.eloancn.activiti</groupId>
-    <artifactId>el-activiti-client</artifactId>
+    <groupId>com.xvshu.activiti</groupId>
+    <artifactId>xs-activiti-client</artifactId>
     <version>1.1.2-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>EL-Activiti-Client</name>
-    <description>Eloancn activiti manager client</description>
+    <name>xs-Activiti-Client</name>
+    <description>xvshu activiti manager client</description>
 
     <developers>
         <developer>
-            <id>eloancn</id>
-            <name>eloancn</name>
-            <email>op@eloancn.com</email>
-            <url>https://www.eloancn.com/</url>
+            <id>xvshu</id>
+            <name>xvshu</name>
+            <email>op@xvshu.com</email>
+            <url>https://www.xvshu.com/</url>
             <timezone>8</timezone>
         </developer>
     </developers>
@@ -70,13 +70,13 @@
         </dependency>
 
         <dependency>
-            <groupId>com.eloancn.organ</groupId>
+            <groupId>com.xvshu.organ</groupId>
             <artifactId>organ-api</artifactId>
             <version>1.0-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <artifactId>common-api</artifactId>
-                    <groupId>com.eloancn.common</groupId>
+                    <groupId>com.xvshu.common</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
